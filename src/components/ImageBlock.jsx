@@ -4,9 +4,9 @@ import ImagePreview from "./ImagePreview";
 
 function ImageBlock(props) {
     return (
-        <li className="h-130 flex p-2 border border-red-500 mb-2">
+        <li className="h-130 flex p-2 border border-red-500 mb-2 bg-indigo-100 rounded-lg">
             {/*img-inputs*/}
-            <div className="w-full flex flex-col justify-around">
+            <div className="sm:w-8/12 w-8/12 flex flex-col justify-around">
                 <Input placeholder="Image url"
                        action={value => (props.setUrl(value, props.image.id))}
                        value={props.image.url}/>
@@ -16,7 +16,7 @@ function ImageBlock(props) {
                        value={props.image.title}/>
             </div>
             {/*img-preview*/}
-            <ImagePreview src={props.image.url}/>
+            <ImagePreview src={props.image.url} edit={props.edit}/>
         </li>
     );
 }

@@ -1,17 +1,31 @@
 import '../App.css';
 import {useState} from "react";
-import ImageEdit from "./ImageEdit";
 import ImageBlock from "./ImageBlock";
 import {v4 as uuidv4} from 'uuid';
+import Modal from "./Modal";
+import React from "react";
 
 
 function App() {
+    const [showModal, setShowModal] = useState(false);
+
+    const [image_edit, setImage_edit] = useState({
+        title: null,
+        url: '',
+        // url: 'https://www.businesswest.co.uk/sites/default/files/styles/event_image/public/blog/featured/shutterstock_439601284_1.jpg?itok=a47EPijY'
+    })
     const [images, setImage] = useState([
+        // {
+        //     id: uuidv4(),
+        //     url: '',
+        //     title: '',
+        //     editMode: false
+        // }
         {
             id: uuidv4(),
-            url: 'https://gdb.rferl.org/CE5A87A3-AB32-4DE3-AD8F-806B5D92548C_w1200_r1.jpg',
+            url: 'https://www.businesswest.co.uk/sites/default/files/styles/event_image/public/blog/featured/shutterstock_439601284_1.jpg?itok=a47EPijY',
             title: 'parlament european',
-            setForEdit: false
+            editMode: false
         }
     ])
 
@@ -33,44 +47,64 @@ function App() {
         }))
     }
 
+    function changeEditMode(id) {
+        setImage(images.map(img => {
+            img.editMode = img.id === id;
+            if (img.id === id) {
+                setImage_edit({
+                    title: img.title,
+                    url: img.url
+                })
+            }
+            return img;
+        }))
+        setShowModal(true)
+    }
+
     const list = images && (
         <ul className="flex flex-col w-full items-stretch">
-            {images.map((image, index) =>
-                <ImageBlock key={index}
+            {images.length ? (images.map((image) =>
+                <ImageBlock key={image.id}
                             image={image}
                             setUrl={setUrl}
                             setTitle={setTitle}
-                />)}
+                            edit={() => changeEditMode(image.id)}
+                />)) :
+                (<li className="flex p-2 border border-gray-300 mb-1 bg-gray-100 rounded-lg items-center justify-center">
+                    Create Image Block first
+                </li>)}
         </ul>
     )
 
-    function addNewBlock() {
+    function addBlock() {
         setImage([...images, {
             id: uuidv4(),
-            url: 'http://www.infotag.md/data/531/59417_eco.l.jpg',
+            url: '',
             title: '',
-            setForEdit: false
+            editMode: false
         }])
     }
 
     return (
         // container
-        <div className="w-10/12 mx-auto bg-gray-100 min-h-screen p-2 flex">
-            {/* content-side*/}
-            <div className="w-8/12 border-r p-2 flex flex-col">
+        <div className="w-10/12 mx-auto bg-white shadow-lg min-h-screen max-w-5xl p-2 flex justify-center">
+            {/* content */}
+            <div className="w-full p-2 flex flex-col">
+                <Modal image={image_edit} isVisible={showModal} hideModal={()=>setShowModal(false)}/>
                 {/*img-form-block*/}
                 {list}
-                <div className='w-10/12 mx-auto border border-white text-center text-2xl text-white rounded shadow cursor-pointer hover:bg-gray-200'
-                     title="Add new block"
-                     onClick={addNewBlock}
+                <div
+                    className='w-10/12 mx-auto border border-indigo-300 py-2 text-center text-2xl text-indigo-400 rounded-lg shadow cursor-pointer hover:bg-indigo-200'
+                    title="Add new block"
+                    onClick={addBlock}
                 >
                     +
                 </div>
             </div>
-            {/* sidebar*/}
-            <div className="w-4/12 pl-2">
-                <ImageEdit src/>
-            </div>
+             {/*sidebar*/}
+            {/*<div className="w-4/12 pl-2">*/}
+            {/*    <ImageEdit src={image_edit}/>*/}
+            {/*</div>*/}
         </div>
     );
 }

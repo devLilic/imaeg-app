@@ -7,7 +7,7 @@ function Input(props){
 
     return (
         <input
-            className="px-2 py-1 text-xl w-full rounded"
+            className="px-2 py-1 text-xl w-full rounded border"
             type="text"
             onChange={handleInput}
             value={props.value}
