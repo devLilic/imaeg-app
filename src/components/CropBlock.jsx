@@ -11,20 +11,24 @@ function CropBlock(props) {
     const aspect = 16 / 9;
 
     useEffect(() => {
-        let height = imgRef.current.clientHeight
-        let width = imgRef.current.clientHeight * 16 / 9;
+        if(props.image.section.width){
+            setCrop(props.image.section)
+        }else{
+            let height = imgRef.current.clientHeight
+            let width = imgRef.current.clientHeight * 16 / 9;
 
-        if (width > imgRef.current.clientWidth) {
-            width = imgRef.current.clientWidth;
-            height = width * 9 / 16;
+            if (width > imgRef.current.clientWidth) {
+                width = imgRef.current.clientWidth;
+                height = width * 9 / 16;
+            }
+            setCrop({
+                unit: '%',
+                x: 0,
+                y: 0,
+                width: width / imgRef.current.clientWidth * 100,
+                height: height / imgRef.current.clientHeight * 100
+            })
         }
-        setCrop({
-            unit: '%',
-            x: 0,
-            y: 0,
-            width: width / imgRef.current.clientWidth * 100,
-            height: height / imgRef.current.clientHeight * 100
-        })
     }, [])
 
     useEffect(() => {
@@ -42,11 +46,6 @@ function CropBlock(props) {
         }
     }, [completedCrop])
 
-    function completedCropHandler(c) {
-        console.log('handler', crop, completedCrop, c);
-        return setCompletedCrop(c)
-    }
-
     return (
         <div>
             {completedCrop && <span>{imgRef.current.naturalWidth} x {imgRef.current.naturalHeight}</span>}
@@ -54,11 +53,11 @@ function CropBlock(props) {
             <div>
                 <ReactCrop crop={crop}
                            onChange={(_, percentCrop) => setCrop(percentCrop)}
-                           onComplete={(c) => completedCropHandler(c)}
+                           onComplete={(_, percentageCrop) => props.crop(percentageCrop)}
                            aspect={aspect}>
                     <img ref={imgRef}
                          alt=""
-                         src={props.src}
+                         src={props.image.url}
                     />
                 </ReactCrop>
             </div>

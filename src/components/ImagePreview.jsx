@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 function ImagePreview(props) {
     const [imageParams, setImageParams] = useState({
@@ -6,13 +6,14 @@ function ImagePreview(props) {
         format: false,
         size: false,
     })
+    const imgRef = useRef()
 
     const urlPattern = /^(http(s)?:\/\/.)?.+\.(jpg|jpeg|png|webp).*/i;
 
     // filters to check on every image
     const filters = {
         aspect: '16:9',
-        format: /^(http(s)?:\/\/.)?.+\.(jpg|jpeg|png).*/i,
+        format: /^(http(s)?:\/\/.)?.+\.(jpg|jpeg|png|webp).*/i,
         size: {
             w: 500,
             h: 400
@@ -44,36 +45,45 @@ function ImagePreview(props) {
     }
 
     function drawPreviewBlock() {
-        return props.src.trim() === '' ?
+        const imgClipPath = props.image.cropped ? {clipPath: `polygon(${props.image.section.x}% ${props.image.section.y}%,${props.image.section.width + props.image.section.x}% ${props.image.section.y}%,${props.image.section.width + props.image.section.x}% ${props.image.section.height + props.image.section.y}%,${props.image.section.x}% ${props.image.section.height + props.image.section.y}%)`} : {}
+        return props.image.url.trim() === '' ?
             '' :
-        (urlPattern.test(props.src)) ?
-            (
-                <>
-                    <img
-                        src={props.src}
-                        className="h-full"
-                        alt="preview"
-                        onLoad={applyFilters}
-                        onClick={props.edit}
-                        title={'title'}
-                    />
-                    <div className="absolute bottom-2 right-1 text-xs text-white">
-                        <span className={spanStyle(imageParams.aspect)}
-                              title="Aspect ratio">16:9</span>
-                        <span className={spanStyle(imageParams.format)}
-                              title="Accepted formats: JPG, JPEG or PNG">IMG</span>
-                        <span className={spanStyle(imageParams.size)}
-                              title={`Minimal image size: ${filters.size.w}px x ${filters.size.h}px`}>LOW</span>
-                    </div>
-                </>
-            ) : (<span className="w-full text-center text-lg text-red-700 bg-red-200 px-3 py-2 rounded-lg self-center">Incorrect url</span>)
+            (urlPattern.test(props.image.url)) ?
+                (
+                    <>
+                        <div>
+                            <div className='h-full'>
+                                <img
+                                    ref={imgRef}
+                                    src={props.image.url}
+                                    className="h-full"
+                                    alt="preview"
+                                    onLoad={applyFilters}
+                                    onClick={props.edit}
+                                    title={'title'}
+                                    style={imgClipPath}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="text-xs text-white flex flex-col items-end justify-around">
+                            <span className={spanStyle(imageParams.aspect || props.image.cropped)}
+                                  title="Aspect ratio">16:9</span>
+                            <span className={spanStyle(imageParams.format)}
+                                  title="Accepted formats: JPG, JPEG or PNG">IMG</span>
+                            <span className={spanStyle(imageParams.size)}
+                                  title={`Minimal image size: ${filters.size.w}px x ${filters.size.h}px`}>LOW</span>
+                        </div>
+                    </>
+                ) : (
+                    <span className="w-full text-center text-lg text-red-700 bg-red-200 px-3 py-2 rounded-lg self-center">Incorrect url</span>)
     }
 
     return (
-        <div className="sm:w-4/12 w-4/12 ml-2 relative flex justify-end">
+        <div className="w-5/12 ml-2 flex">
             {drawPreviewBlock()}
         </div>
     );
 }
-// sm:w-10/12 w-6/12
+
 export default ImagePreview;
