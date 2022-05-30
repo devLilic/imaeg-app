@@ -1,6 +1,6 @@
 # About project imaeg-app
-This project offers possibility get images from different sources by their links \
-and resize them according to selected filters
+This project offers possibility to get images from different urls \
+and resize them quickly
 
 ## Getting Started with Create React App
 
