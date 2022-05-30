@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 
 function ImagePreview(props) {
     const [imageParams, setImageParams] = useState({
@@ -51,6 +51,14 @@ function ImagePreview(props) {
             (urlPattern.test(props.image.url)) ?
                 (
                     <>
+                        <div className="text-xs text-white flex flex-col items-center mr-3 justify-around mt-2">
+                            <span className={spanStyle(imageParams.aspect || props.image.cropped)}
+                                  title="Aspect ratio">16:9</span>
+                            <span className={spanStyle(imageParams.format)}
+                                  title="Accepted formats: JPG, JPEG or PNG">IMG</span>
+                            <span className={spanStyle(imageParams.size)}
+                                  title={`Minimal image size: ${filters.size.w}px x ${filters.size.h}px`}>LOW</span>
+                        </div>
                         <div>
                             <div className='h-full'>
                                 <img
@@ -64,15 +72,6 @@ function ImagePreview(props) {
                                     style={imgClipPath}
                                 />
                             </div>
-                        </div>
-
-                        <div className="text-xs text-white flex flex-col items-end justify-around">
-                            <span className={spanStyle(imageParams.aspect || props.image.cropped)}
-                                  title="Aspect ratio">16:9</span>
-                            <span className={spanStyle(imageParams.format)}
-                                  title="Accepted formats: JPG, JPEG or PNG">IMG</span>
-                            <span className={spanStyle(imageParams.size)}
-                                  title={`Minimal image size: ${filters.size.w}px x ${filters.size.h}px`}>LOW</span>
                         </div>
                     </>
                 ) : (
